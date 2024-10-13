@@ -1,4 +1,4 @@
-import Header from "@/components/header/Header";
+import Footer from "@/components/footer/Footer";
 import "./../styles/globals.css";
 import Providers from "./Providers";
 
@@ -10,12 +10,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="text-body font-body">
-        <Header />
-        <Providers>{children}</Providers>
-
-        <footer>
-          <p>© 2024 My Website</p>
-        </footer>
+        {/* TUTTI I COMPONENTI CHE UTILIZZANO REDUX, USEREDUCER ETC 
+        DEVONO ESSERE AVVOLTI DAL PROVIDERS */}
+        <Providers>
+          <div className="flex min-h-screen flex-col">
+            <main className="flex-grow">{children}</main>
+            <Footer />
+          </div>
+        </Providers>
       </body>
     </html>
   );

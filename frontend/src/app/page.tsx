@@ -2,6 +2,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import { AppState } from "./../redux/store";
 import { login, logout } from "@/redux/slices/userSlice";
+import Header from "@/components/header/Header";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -17,6 +18,7 @@ export default function Home() {
 
   return (
     <>
+      <Header />
       <div>Dajeee home</div>
       <button onClick={handleLoggati}>{isLoggedIn ? "Logout" : "Login"}</button>
 

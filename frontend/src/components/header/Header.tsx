@@ -1,12 +1,21 @@
-import Link from "next/link";
+"use client";
 
+import Link from "next/link";
 import { FC } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import LinksSecondHeader from "./LinksSecondHeader";
+import { useSelector } from "react-redux";
+import { AppState } from "@/redux/store";
 
 const FaUser = dynamic(
   () => import("react-icons/fa").then((mod) => mod.FaUser),
+  {
+    ssr: false,
+  }
+);
+const CiLogin = dynamic(
+  () => import("react-icons/ci").then((mod) => mod.CiLogin),
   {
     ssr: false,
   }
@@ -23,6 +32,8 @@ const menuItems: MenuItem[] = [
 ];
 
 const Header: FC = () => {
+  const isLoggiedIn = useSelector((state: AppState) => state.user.isLoggedIn);
+
   return (
     <header className="flex flex-col bg-gray-900 text-gray-300">
       <section className="flex justify-around items-center mt-4">
@@ -55,10 +66,16 @@ const Header: FC = () => {
           </ul>
         </nav>
 
-        {/* USER LOGIN/REGISTRATION */}
-        <Link href="login">
-          <FaUser className="hover:scale-125 transform transition duration-300" />
-        </Link>
+        {/* USER LOGIN/REGISTRATION & PROFILE */}
+        {isLoggiedIn ? (
+          <Link href="user-profile">
+            <FaUser className="hover:scale-125 transform transition duration-300" />
+          </Link>
+        ) : (
+          <Link href="sign-up">
+            <CiLogin className="hover:scale-125 transform transition duration-300" />
+          </Link>
+        )}
       </section>
 
       {/* SECOND HEADER */}
