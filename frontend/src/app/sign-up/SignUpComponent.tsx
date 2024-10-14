@@ -4,7 +4,9 @@ import { FC, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { createClient } from "@supabase/supabase-js";
-import { FaCheckCircle } from "react-icons/fa"; // Importa l'icona di successo
+import { FaCheckCircle } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const supabaseUrl = "https://qjlmyymlqfkcryioeazd.supabase.co";
 const supabaseAnonKey =
@@ -13,6 +15,7 @@ const supabaseAnonKey =
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const SignUpComponent: FC = () => {
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [registrationError, setRegistrationError] = useState<string | null>(
@@ -22,24 +25,24 @@ const SignUpComponent: FC = () => {
 
   // Schemi di validazione per i due step
   const firstStepValidationSchema = Yup.object().shape({
-    nickname: Yup.string().required("Nickname richiesto"),
+    nickname: Yup.string().required("Nickname required"),
     password: Yup.string()
-      .min(6, "La password deve avere almeno 6 caratteri")
-      .required("Password richiesta"),
+      .min(6, "Password must have at least 6 characters")
+      .required("Password required"),
   });
 
   const secondStepValidationSchema = Yup.object().shape({
     currentWeight: Yup.number()
-      .required("Peso attuale richiesto")
-      .positive("Deve essere un numero positivo"),
+      .required("Current weight required")
+      .positive("Must be a positive number"),
     desiredWeight: Yup.number()
-      .required("Peso desiderato richiesto")
-      .positive("Deve essere un numero positivo")
+      .required("Desired weight required")
+      .positive("Must be a positive number")
       .lessThan(
         Yup.ref("currentWeight"),
-        "Il peso desiderato deve essere minore del peso attuale"
+        "Your desired weight must be less than your current weight."
       ),
-    targetDate: Yup.date().required("Data richiesta"),
+    targetDate: Yup.date().required("Data required"),
   });
 
   // Inizializzazione di Formik
@@ -72,12 +75,11 @@ const SignUpComponent: FC = () => {
           setRegistrationError(error.message);
         } else {
           console.log("Utente registrato:", data);
-          setShowSuccessIcon(true); // Mostra l'icona di successo
+          setShowSuccessIcon(true);
+
+          // Attendi 4 secondi prima di reindirizzare
           setTimeout(() => {
-            // Rimuovi l'icona di successo dopo 4 secondi
-            setShowSuccessIcon(false);
-            // Qui puoi fare il reindirizzamento alla pagina user-profile
-            window.location.href = "/user-profile"; // Cambia questa riga con un router se stai usando React Router
+            router.push("/user-profile");
           }, 4000);
         }
       } catch (error) {
@@ -111,6 +113,15 @@ const SignUpComponent: FC = () => {
 
         {loading ? (
           <div className="text-center text-gray-700 mb-4">Please wait...</div>
+        ) : showSuccessIcon ? (
+          // Mostra l'icona di successo con animazione
+          <div className="mt-4 text-center">
+            <FaCheckCircle className="text-green-500 text-5xl mx-auto animate-spin" />
+            <p className="text-gray-700 mt-2">
+              Registrazione completata con successo! Reindirizzamento in
+              corso...
+            </p>
+          </div>
         ) : (
           <form onSubmit={formik.handleSubmit}>
             {step === 1 ? (
@@ -201,7 +212,7 @@ const SignUpComponent: FC = () => {
                     htmlFor="desiredWeight"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Your Desire Weight(kg)
+                    Your Desired Weight (kg)
                   </label>
                   <input
                     id="desiredWeight"
@@ -213,7 +224,7 @@ const SignUpComponent: FC = () => {
                         ? "border-red-500"
                         : "border-gray-300"
                     }`}
-                    placeholder="Enter desire weight"
+                    placeholder="Enter desired weight"
                   />
                   {formik.touched.desiredWeight &&
                     formik.errors.desiredWeight && (
@@ -228,7 +239,7 @@ const SignUpComponent: FC = () => {
                     htmlFor="targetDate"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Data to reach ideal weight
+                    Date to reach ideal weight
                   </label>
                   <input
                     id="targetDate"
@@ -264,16 +275,13 @@ const SignUpComponent: FC = () => {
             </button>
           </form>
         )}
-
-        {/* Mostra l'icona di successo se è stato registrato */}
-        {showSuccessIcon && (
-          <div className="mt-4 text-center">
-            <FaCheckCircle className="text-green-500 text-5xl mx-auto" />
-            <p className="text-gray-700 mt-2">
-              Registrazione completata con successo!
-            </p>
-          </div>
-        )}
+      </div>
+      <div>
+        <Link href="/login">
+          <h2 className="text-lg p-2 text-blue-700 hover:scale-105 transform-transition duration-300 hover:text-blue-500">
+            Already registered? Login
+          </h2>
+        </Link>
       </div>
     </div>
   );
