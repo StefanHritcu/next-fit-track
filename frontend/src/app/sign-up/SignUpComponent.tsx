@@ -57,9 +57,6 @@ const SignUpComponent: FC = () => {
     validationSchema:
       step === 1 ? firstStepValidationSchema : secondStepValidationSchema,
     onSubmit: async (values) => {
-      setLoading(true);
-      setRegistrationError(null);
-
       try {
         const { data, error } = await supabase.from("users").insert([
           {
@@ -76,6 +73,8 @@ const SignUpComponent: FC = () => {
         } else {
           console.log("Utente registrato:", data);
           setShowSuccessIcon(true);
+          setLoading(true);
+          setRegistrationError(null);
 
           // Attendi 4 secondi prima di reindirizzare
           setTimeout(() => {
@@ -106,6 +105,7 @@ const SignUpComponent: FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <h2 className="mb-8">Create a profile</h2>
       <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold text-center mb-6">
           {step === 1 ? "Step 1/2" : "Step 2/2"}

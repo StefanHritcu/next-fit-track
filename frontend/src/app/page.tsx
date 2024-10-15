@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppState } from "./../redux/store";
 import { login, logout } from "@/redux/slices/userSlice";
 import Header from "@/components/header/Header";
+import "./../styles/globals.css";
 
 export default function Home() {
   const dispatch = useDispatch();
