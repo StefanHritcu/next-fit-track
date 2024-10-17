@@ -7,6 +7,7 @@ interface UserState {
   currentWeight: number | null;
   desiredWeight: number | null;
   targetDate: string | null;
+  moreDataAdded: boolean;
 }
 
 const initialState: UserState = {
@@ -16,6 +17,7 @@ const initialState: UserState = {
   currentWeight: null,
   desiredWeight: null,
   targetDate: null,
+  moreDataAdded: false,
 };
 
 const userSlice = createSlice({
@@ -28,6 +30,7 @@ const userSlice = createSlice({
       state.currentWeight = action.payload.currentWeight;
       state.desiredWeight = action.payload.desiredWeight;
       state.targetDate = action.payload.targetDate;
+      state.moreDataAdded = false;
     },
     logout(state) {
       state.isLoggedIn = false;
@@ -35,6 +38,12 @@ const userSlice = createSlice({
       state.currentWeight = null;
       state.desiredWeight = null;
       state.targetDate = null;
+      state.moreDataAdded = false;
+    },
+    addMoreData(state) {
+      if (state.isLoggedIn) {
+        state.moreDataAdded = true;
+      }
     },
   },
 });

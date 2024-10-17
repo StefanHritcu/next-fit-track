@@ -1,19 +1,37 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "./../redux/store";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+import Link from "next/link";
+import { logout } from "@/redux/slices/userSlice";
 
 const UserProfileComponent = () => {
   const { userNickname, currentWeight, desiredWeight, targetDate } =
     useSelector((state: AppState) => state.user);
 
-  // State for loading simulation
+  const FaArrowRightLong = dynamic(() =>
+    import("react-icons/fa6").then((mod) => mod.FaArrowRightLong)
+  );
+
+  const FaArrowUpRightFromSquare = dynamic(() =>
+    import("react-icons/fa6").then((mod) => mod.FaArrowUpRightFromSquare)
+  );
+  const MdLogout = dynamic(() =>
+    import("react-icons/md").then((mod) => mod.MdLogout)
+  );
+
+  const dispatch = useDispatch();
+
   const [loading, setLoading] = useState(true);
   const [daysRemaining, setDaysRemaining] = useState<number | null>(null);
   const [weightToLose, setWeightToLose] = useState<number | null>(null);
   const [dailyCalorieDeficit, setDailyCalorieDeficit] = useState<number | null>(
+    null
+  );
+  const [totalCalorieDeficit, setTotalCalorieDeficit] = useState<number | null>(
     null
   );
 
@@ -36,29 +54,66 @@ const UserProfileComponent = () => {
           setDailyCalorieDeficit(
             Math.ceil((loseWeight * 7700) / remainingDays)
           );
+          setTotalCalorieDeficit(Math.ceil(loseWeight * 7700));
         }
         setLoading(false);
       }, 2000);
     }
   }, [targetDate, currentWeight, desiredWeight]);
 
+  const handleLogOut = () => {
+    dispatch(logout());
+  };
+
   return (
     <div className="container mx-auto p-6">
-      {/* Header Section */}
-      <header className="bg-blue-600 text-white rounded-lg p-6 mb-6 flex flex-col md:flex-row justify-around items-center">
-        <div>
-          <h1 className="text-3xl font-bold">
-            Welcome, {userNickname || "User"}!
-          </h1>
-          <p className="text-xl">
-            Current Weight:{" "}
-            {currentWeight !== null ? `${currentWeight} kg` : "Not set"}
+      <Link href="/add-personal-informations">
+        <div className="hover:scale-105 flex justify-center items-center transform-transition duration-300 bg-red-600 mb-2 rounded-lg p-2 text-center text-white text-sm lg:text-xl md:font-semibold">
+          <p>
+            To further improve the calculation results, add more personal
+            information!
           </p>
-          <p className="text-xl">
-            Desired Weight:{" "}
+          <FaArrowUpRightFromSquare className="w-6 h-6 ml-4" />
+        </div>
+      </Link>
+      {/* Header Section */}
+      <header className="bg-blue-600 text-white rounded-lg p-6 mb-6">
+        <div className="relative grid grid-cols-1 items-center sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {/* NICKNAME */}
+          <h1 className="text-3xl font-bold">{userNickname || "User"}!</h1>
+
+          {/* CURRENT KG & DESIRED KG */}
+          <p className="text-xl flex items-center">
+            {currentWeight !== null ? `${currentWeight} kg` : "Not set"}
+            <FaArrowRightLong className="mx-4" />
             {desiredWeight !== null ? `${desiredWeight} kg` : "Not set"}
           </p>
-          <p className="text-xl">Target Date: {targetDate || "Not set"}</p>
+
+          {/* KG TO LOSE & TOTAL KCAL */}
+          <p className="text-xl flex items-center">
+            {weightToLose !== null ? `- ${weightToLose} kg` : "Not set"}
+            <span className="mx-2">=</span>
+            {totalCalorieDeficit !== null
+              ? `${totalCalorieDeficit} kcal`
+              : "Not set"}
+          </p>
+
+          {/* KCAL PER DAY TO LOSE */}
+          <p className="text-xl">
+            {dailyCalorieDeficit !== null
+              ? `${dailyCalorieDeficit} kcal/day`
+              : "Not set"}
+          </p>
+
+          <div
+            title="LOGOUT"
+            className="absolute my-auto right-0 translate-x-4 hover:scale-125 action:scale-145 transform-transition duration-300"
+            onClick={handleLogOut}
+          >
+            <Link href="/">
+              <MdLogout />
+            </Link>
+          </div>
         </div>
       </header>
 

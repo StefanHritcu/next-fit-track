@@ -1,7 +1,6 @@
 import dynamic from "next/dynamic";
 import { FC, Suspense } from "react";
 
-// Importazione dinamica del componente SignUpComponent
 const SignUpComponent = dynamic(() => import("./SignUpComponent"), {
   ssr: false,
 });

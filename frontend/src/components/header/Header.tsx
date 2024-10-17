@@ -33,7 +33,9 @@ const menuItems: MenuItem[] = [
 
 const Header: FC = () => {
   const isLoggiedIn = useSelector((state: AppState) => state.user.isLoggedIn);
-
+  const userNickname = useSelector(
+    (state: AppState) => state.user.userNickname
+  );
   return (
     <header className="flex flex-col bg-gray-900 text-gray-300">
       <section className="flex justify-around items-center mt-4">
@@ -68,8 +70,12 @@ const Header: FC = () => {
 
         {/* USER LOGIN/REGISTRATION & PROFILE */}
         {isLoggiedIn ? (
-          <Link href="user-profile">
-            <FaUser className="hover:scale-125 transform transition duration-300" />
+          <Link
+            href="user-profile"
+            className="flex items-center hover:scale-125 transform transition duration-300"
+          >
+            <FaUser className="mx-2" />
+            <span className="mx-2">{userNickname}</span>
           </Link>
         ) : (
           <Link href="sign-up">

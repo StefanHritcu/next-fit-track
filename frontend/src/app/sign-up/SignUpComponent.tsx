@@ -7,6 +7,8 @@ import { createClient } from "@supabase/supabase-js";
 import { FaCheckCircle } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useDispatch } from "react-redux";
+import { login } from "@/redux/slices/userSlice";
 
 const supabaseUrl = "https://qjlmyymlqfkcryioeazd.supabase.co";
 const supabaseAnonKey =
@@ -23,7 +25,8 @@ const SignUpComponent: FC = () => {
   );
   const [showSuccessIcon, setShowSuccessIcon] = useState(false);
 
-  // Schemi di validazione per i due step
+  const dispatch = useDispatch();
+
   const firstStepValidationSchema = Yup.object().shape({
     nickname: Yup.string().required("Nickname required"),
     password: Yup.string()
@@ -45,7 +48,6 @@ const SignUpComponent: FC = () => {
     targetDate: Yup.date().required("Data required"),
   });
 
-  // Inizializzazione di Formik
   const formik = useFormik({
     initialValues: {
       nickname: "",
@@ -76,6 +78,19 @@ const SignUpComponent: FC = () => {
           setLoading(true);
           setRegistrationError(null);
 
+          // Salva i dati nel Redux store
+          dispatch(
+            login({
+              isLoggedIn: true,
+              userNickname: values.nickname,
+              userPassword: values.password,
+              currentWeight: parseFloat(values.currentWeight),
+              desiredWeight: parseFloat(values.desiredWeight),
+              targetDate: values.targetDate,
+              moreDataAdded: false,
+            })
+          );
+
           // Attendi 4 secondi prima di reindirizzare
           setTimeout(() => {
             router.push("/user-profile");
@@ -92,7 +107,6 @@ const SignUpComponent: FC = () => {
     },
   });
 
-  // Gestione dei passaggi
   const handleNextStep = () => {
     if (step === 1 && formik.isValid) {
       setStep(2);
@@ -102,7 +116,6 @@ const SignUpComponent: FC = () => {
       formik.setTouched({ nickname: true, password: true });
     }
   };
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <h2 className="mb-8">Create a profile</h2>
