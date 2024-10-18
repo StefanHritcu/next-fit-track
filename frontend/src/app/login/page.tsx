@@ -1,15 +1,29 @@
 "use client";
 
 import BackToHome from "@/components/BackToHome";
+import { createClient } from "@supabase/supabase-js";
 import { useFormik } from "formik";
-
+import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
 import * as Yup from "yup";
+import { FaCheckCircle } from "react-icons/fa";
 import Link from "next/link";
+import { useDispatch } from "react-redux"; // Importa useDispatch
+import { login } from "@/redux/slices/userSlice";
+
+// Inizializza il client di Supabase
+const supabaseUrl = "https://qjlmyymlqfkcryioeazd.supabase.co";
+const supabaseAnonKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqbG15eW1scWZrY3J5aW9lYXpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjg4Mzc2OTAsImV4cCI6MjA0NDQxMzY5MH0.imE42wsLh1NaxFDWWTYo58Q81lGRCchl8-NfuEqouyg";
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const Login: FC = () => {
+  const router = useRouter();
+  const dispatch = useDispatch(); // Inizializza il dispatch
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showSuccessIcon, setShowSuccessIcon] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -22,9 +36,56 @@ const Login: FC = () => {
         .min(6, "Password must have at least 6 characters")
         .required("Password must have at least 6 characters"),
     }),
-    onSubmit: async () => {
+    onSubmit: async (values) => {
       setLoading(true);
       setErrorMessage(null);
+
+      try {
+        const { data: user, error: findError } = await supabase
+          .from("users")
+          .select(
+            "nickname, password, currentWeight, desiredWeight, targetDate"
+          ) // Seleziona anche gli altri campi
+          .eq("nickname", values.nickname)
+          .single();
+
+        if (findError || !user) {
+          setErrorMessage("User not found with the provided nickname.");
+          setLoading(false);
+          return;
+        }
+
+        // Verifica se la password corrisponde
+        if (user.password !== values.password) {
+          setErrorMessage("Incorrect password.");
+          setLoading(false);
+          return;
+        }
+
+        // Se la password corrisponde, il login è riuscito
+        console.log("Login successful:", user);
+        setShowSuccessIcon(true);
+
+        // Dispatch dei valori nello stato di Redux
+        dispatch(
+          login({
+            userNickname: user.nickname,
+            userPassword: user.password,
+            currentWeight: user.currentWeight,
+            desiredWeight: user.desiredWeight,
+            targetDate: user.targetDate,
+          })
+        );
+
+        setTimeout(() => {
+          router.push("/user-profile");
+        }, 2000);
+      } catch (error) {
+        console.error("Unexpected error:", error);
+        setErrorMessage("An unexpected error occurred.");
+      } finally {
+        setLoading(false);
+      }
     },
   });
 
@@ -36,6 +97,13 @@ const Login: FC = () => {
         <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
           {loading ? (
             <div className="text-center text-gray-700 mb-4">Please wait...</div>
+          ) : showSuccessIcon ? (
+            <div className="mt-4 text-center">
+              <FaCheckCircle className="text-green-500 text-5xl mx-auto animate-spin" />
+              <p className="text-gray-700 mt-2">
+                Login successful! Redirecting...
+              </p>
+            </div>
           ) : (
             <>
               <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
