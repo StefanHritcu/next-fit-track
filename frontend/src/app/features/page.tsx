@@ -1,4 +1,4 @@
-import { FC } from "react";
+import React, { FC } from "react";
 import { SiNextdotjs } from "react-icons/si";
 import { SiSupabase } from "react-icons/si";
 import { FaRegFileAlt } from "react-icons/fa";
