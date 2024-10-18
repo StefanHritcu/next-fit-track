@@ -45,7 +45,7 @@
   <li>Users input their current weight, height, age, gender, and desired weight loss target.</li>
   <li>The app calculates the ideal weight and generates a timeline based on the user’s input.</li>
   <li>Daily weight entries are logged and visualized through progress charts.</li>
-  <li>Firebase stores user data securely, allowing for future access across devices.</li>
+  <li>Supabase stores user data securely, allowing for future access across devices.</li>
   <li>Redux handles the global state to ensure smooth data flow and updates across the app.</li>
 </ol>
 
