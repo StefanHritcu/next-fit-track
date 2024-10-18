@@ -7,6 +7,8 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { logout } from "@/redux/slices/userSlice";
+import MotivationalCard from "./motivationCard/MotivationalCard";
+import WeightLossChart from "./WeightLossChart";
 
 const UserProfileComponent = () => {
   const { userNickname, currentWeight, desiredWeight, targetDate } =
@@ -236,29 +238,14 @@ const UserProfileComponent = () => {
             )}
           </div>
         </div>
-
-        {/* Motivational Card Example */}
-        <div className="bg-purple-100 border-2 border-purple-300 shadow-lg rounded-lg overflow-hidden flex flex-col transition-transform transform hover:scale-105">
-          <div className="relative w-full h-64">
-            <Image
-              src="/assets/images/motivation.jpg"
-              alt="motivation"
-              className="object-cover"
-              layout="fill"
-            />
-          </div>
-          <div className="p-4 flex-1">
-            <h2 className="text-2xl font-semibold mb-2">Motivazione</h2>
-            <p className="text-gray-700 mb-4">
-              Rimani concentrato sui tuoi obiettivi e ricorda perché hai
-              iniziato!
-            </p>
-            <p className="text-lg font-bold text-center">
-              Continua a spingere in avanti!
-            </p>
-          </div>
-        </div>
       </div>
+
+      <main className="min-h-screen my-4 bg-gray-50 flex items-center justify-center p-4">
+        <WeightLossChart />
+      </main>
+
+      {/* Motivational Card Example */}
+      <MotivationalCard />
     </div>
   );
 };

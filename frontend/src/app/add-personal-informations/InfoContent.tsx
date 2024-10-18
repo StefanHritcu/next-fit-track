@@ -1,16 +1,31 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { createClient } from "@supabase/supabase-js";
 
-// Supabase configuration
-const supabaseUrl = "https://your-supabase-url.supabase.co";
-const supabaseAnonKey = "your-anon-key";
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabaseUrl = "https://qjlmyymlqfkcryioeazd.supabase.co";
+const supabaseAnonKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqbG15eW1scWZrY3J5aW9lYXpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjg4Mzc2OTAsImV4cCI6MjA0NDQxMzY5MH0.imE42wsLh1NaxFDWWTYo58Q81lGRCchl8-NfuEqouyg";
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const InfoContent: FC = () => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Ottieni l'utente corrente
+    const fetchUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+    };
+
+    fetchUser();
+  }, []);
+
   const formik = useFormik({
     initialValues: {
       gender: "",
@@ -31,16 +46,25 @@ const InfoContent: FC = () => {
       ),
     }),
     onSubmit: async (values) => {
-      const { data, error } = await supabase.from("user_data").insert([values]);
+      if (user) {
+        try {
+          const { data, error } = await supabase
+            .from("user_data")
+            .insert([{ ...values, user_id: user.id }]);
 
-      if (error) {
-        console.error("Error inserting data:", error);
+          if (error) {
+            console.error("Error inserting data:", error);
+          } else {
+            console.log("Data inserted successfully:", data);
+          }
+        } catch (error) {
+          console.error("Error fetching user or inserting data:", error);
+        }
       } else {
-        console.log("Data inserted successfully:", data);
+        console.error("User is not authenticated. Please log in.");
       }
     },
   });
-
   return (
     <div className="max-w-md mx-auto p-4 bg-white shadow-md py-4 rounded-md">
       <h1 className="text-2xl font-bold mb-4">Add More Information</h1>

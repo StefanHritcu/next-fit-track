@@ -27,8 +27,8 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-  { label: "How It Works", href: "" },
-  { label: "Features", href: "" },
+  { label: "How It Works", href: "/how-it-works" },
+  { label: "Features", href: "/features" },
 ];
 
 const Header: FC = () => {
