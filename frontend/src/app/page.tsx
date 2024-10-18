@@ -1,12 +1,11 @@
 "use client";
 import { useSelector, useDispatch } from "react-redux";
 import { AppState } from "./../redux/store";
-import { login, logout } from "@/redux/slices/userSlice";
+import { login, logout } from "@/redux/slices/userSlice"; // Assicurati che questa importazione sia corretta
 import Header from "@/components/header/Header";
 import "./../styles/globals.css";
 import Image from "next/image";
 import Link from "next/link";
-import Login from "./login/page";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -16,7 +15,7 @@ export default function Home() {
     if (isLoggedIn) {
       dispatch(logout());
     } else {
-      dispatch(Login());
+      dispatch(login());
     }
   };
 
@@ -31,7 +30,6 @@ export default function Home() {
           layout="fill"
         />
         <div className="absolute inset-0 bg-black opacity-50"></div>{" "}
-        {/* Overlay to improve readability */}
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-white">
           <h1 className="text-4xl md:text-6xl font-bold">
             Track Your Weight, Stay Motivated!

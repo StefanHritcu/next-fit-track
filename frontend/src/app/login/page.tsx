@@ -20,7 +20,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const Login: FC = () => {
   const router = useRouter();
-  const dispatch = useDispatch(); // Inizializza il dispatch
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showSuccessIcon, setShowSuccessIcon] = useState(false);
